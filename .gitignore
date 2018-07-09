@@ -1,6 +1,7 @@
 .DS_Store
 NLP-course-receipt.pdf
 data/
+data.tar
 cache/
 .ipynb_checkpoints/
 __pycache__/
