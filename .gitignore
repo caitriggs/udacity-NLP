@@ -115,3 +115,11 @@ MySpeech/
 .idea/
 my_dev.json
 LibriSpeech_Samples.zip
+
+LibriSpeech/
+.ipynb_checkpoints/
+.DS_Store
+__pycache__/
+*.tar.gz
+*.pyc
+*.json
