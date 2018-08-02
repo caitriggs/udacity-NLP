@@ -2,6 +2,7 @@
 Defines various functions for processing the data.
 """
 import numpy as np
+from os.path import join
 import soundfile
 from numpy.lib.stride_tricks import as_strided
 from char_map import char_map, index_map

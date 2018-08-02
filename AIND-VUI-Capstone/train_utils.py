@@ -34,6 +34,7 @@ def train_model(input_to_softmax,
                 save_model_path,
                 train_json='train_corpus.json',
                 valid_json='valid_corpus.json',
+                prefix='',
                 minibatch_size=20,
                 spectrogram=True,
                 mfcc_dim=13,
@@ -48,8 +49,8 @@ def train_model(input_to_softmax,
         spectrogram=spectrogram, mfcc_dim=mfcc_dim, max_duration=max_duration,
         sort_by_duration=sort_by_duration)
     # add the training data to the generator
-    audio_gen.load_train_data(train_json)
-    audio_gen.load_validation_data(valid_json)
+    audio_gen.load_train_data(train_json, prefix)
+    audio_gen.load_validation_data(valid_json, prefix)
     # calculate steps_per_epoch
     num_train_examples=len(audio_gen.train_audio_paths)
     steps_per_epoch = num_train_examples//minibatch_size

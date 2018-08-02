@@ -2,7 +2,7 @@
 Defines a class that is used to featurize audio clips, and provide
 them to the network for training or testing.
 """
-
+from os.path import join
 import json
 import numpy as np
 import random
@@ -19,7 +19,7 @@ RNG_SEED = 123
 
 class AudioGenerator():
     def __init__(self, step=10, window=20, max_freq=8000, mfcc_dim=13,
-        minibatch_size=20, desc_file=None, spectrogram=True, max_duration=10.0, 
+        minibatch_size=20, desc_file=None, prefix='', spectrogram=True, max_duration=10.0, 
         sort_by_duration=False):
         """
         Params:
@@ -163,26 +163,28 @@ class AudioGenerator():
                 self.cur_test_index = 0
             yield ret
 
-    def load_train_data(self, desc_file='train_corpus.json'):
-        self.load_metadata_from_desc_file(desc_file, 'train')
+    def load_train_data(self, desc_file='train_corpus.json', prefix=''):
+        self.load_metadata_from_desc_file(desc_file, prefix, 'train')
         self.fit_train()
         if self.sort_by_duration:
             self.sort_data_by_duration('train')
 
-    def load_validation_data(self, desc_file='valid_corpus.json'):
-        self.load_metadata_from_desc_file(desc_file, 'validation')
+    def load_validation_data(self, desc_file='valid_corpus.json', prefix=''):
+        self.load_metadata_from_desc_file(desc_file, prefix, 'validation')
         if self.sort_by_duration:
             self.sort_data_by_duration('valid')
 
-    def load_test_data(self, desc_file='test_corpus.json'):
-        self.load_metadata_from_desc_file(desc_file, 'test')
+    def load_test_data(self, desc_file='test_corpus.json', prefix=''):
+        self.load_metadata_from_desc_file(desc_file, prefix, 'test')
     
-    def load_metadata_from_desc_file(self, desc_file, partition):
+    def load_metadata_from_desc_file(self, desc_file, prefix, partition):
         """ Read metadata from a JSON-line file
             (possibly takes long, depending on the filesize)
         Params:
             desc_file (str):  Path to a JSON-line file that contains labels and
                 paths to the audio files
+            prefix (str): The location of the audio file directory up to the key directory 
+                if data is not in the same parent directory as the notebook. e.g. '/media/datasets/'
             partition (str): One of 'train', 'validation' or 'test'
         """
         audio_paths, durations, texts = [], [], []
@@ -192,7 +194,7 @@ class AudioGenerator():
                     spec = json.loads(json_line)
                     if float(spec['duration']) > self.max_duration:
                         continue
-                    audio_paths.append(spec['key'])
+                    audio_paths.append(join(prefix, spec['key']))
                     durations.append(float(spec['duration']))
                     texts.append(spec['text'])
                 except Exception as e:
